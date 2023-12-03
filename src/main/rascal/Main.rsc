@@ -5,7 +5,7 @@ import List;
 import Map;
 import Relation;
 import Set;
-
+import analysis::graphs::Graph;
 
 int main(int testArgument=0) {
     println("argument: <testArgument>");
@@ -59,4 +59,27 @@ public void exercise7(){
     //Compute the list of prime numbers (up to 100) in ascending order.
     println("-");
     println(sort([ a | a <- domain(m), m[a] == 2 ]));
+}
+
+public Graph[str] PointsAndDirections = {<"A", "B">, <"A", "D">, <"B", "D">, <"B", "E">, <"C", "B">, <"C", "E">, <"C", "F">, <"E", "D">, <"E", "F">};
+
+public void exercise8(){
+    //a. How many components does the system consist of?
+    println(size(carrier(PointsAndDirections)));
+
+    //b. How many dependencies are there between the components?
+    println(size(PointsAndDirections));
+
+    //c. Which components are not used by any component?
+    println(top(PointsAndDirections));
+
+    //d. Which components are needed (directly or indirectly) for A?
+    println((PointsAndDirections+)["A"]);
+
+    //e. Which components are not used (directly or indirectly) by C?
+    total = carrier(PointsAndDirections);
+    println(total - (PointsAndDirections*)["C"]);
+
+    //f. How often is each component used?
+    println(( a:size(invert(PointsAndDirections)[a]) | a <- total ));
 }
