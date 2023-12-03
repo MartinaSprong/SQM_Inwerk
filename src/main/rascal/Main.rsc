@@ -95,8 +95,8 @@ public bool descending(tuple[&a, num] x, tuple[&a, num] y) {
 }
 
 public map[loc, int] linesPerFile (M3 model) {
-    set[loc] files = files(model);
-    return ( a:size(readFileLines(a)) | a <- files );
+    set[loc] bestanden = files(model);
+    return ( a:size(readFileLines(a)) | a <- bestanden );
 }
 
 public rel[str, Statement] methodsAST(tree) {
@@ -141,6 +141,68 @@ public void exercise9(){
     // println("<a>: <n> subclasses");
 }
 
+public bool aflopend(tuple[&a, num] x, tuple[&a, num] y) {
+   return x[1] > y[1];
+} 
+
+public map[loc, int] regelsPerBestand (M3 model) {
+   set[loc] bestanden = files(model);
+   return ( a:size(readFileLines(a)) | a <- bestanden );
+}
+
+public rel[str, Statement] methodenAST(tree) {
+   rel[str, Statement] result = {};
+   visit (tree) {
+      case \method(_, name, _, _, impl): result += <name, impl>;
+      case \constructor(name, _, _, impl): result += <name, impl>;
+   }
+   return(result);
+}
+
+public int telIfs(Statement d) {
+   int count = 0;
+   visit(d) {
+      case \if(_,_): count=count+1;
+      case \if(_,_,_): count=count+1;
+   } 
+   return count;
+}
+
+public void exercise9correct() {
+   loc project = |file:///C:/Users/mspr/Documents/OU/SoftwareQualityManagement/|;
+   M3 model = createM3FromDirectory(project);
+   set[loc] bestanden = files(model);
+   // aantal Java-bestanden
+   println("(9a)");
+   println(size(bestanden));
+   // aantal regels per Java-bestand
+   println("(9b)");
+   map[loc, int] regels = regelsPerBestand(model);
+   for (<a, b> <- sort(toList(regels), aflopend))
+      println("<a.file>: <b> regels");
+   // aantal methoden per klasse (gesorteerd)
+   println("(9c)");
+   methoden =  { <x,y> | <x,y> <- model.containment
+                       , x.scheme=="java+class"
+                       , y.scheme=="java+method" || y.scheme=="java+constructor" 
+                       };
+   telMethoden = { <a, size(methoden[a])> | a <- domain(methoden) };
+   for (<a,n> <- sort(telMethoden, aflopend))
+      println("<a>: <n> methoden");
+   // klasse met meeste subklassen
+   println("(9d)");
+   subklassen = invert(model.extends);
+   telKinderen = { <a, size((subklassen+)[a])> | a <- domain(subklassen) };
+   for (<a, n> <- sort(telKinderen, aflopend))
+      println("<a>: <n> subklassen");
+   // klasse met meeste if-statements
+   println("(9e)");
+   set[Declaration] decls = createAstsFromDirectory(project, true);
+   rel[str,Statement] stats = methodenAST(decls);
+   aantalIfs = sort([ <name, telIfs(s)> | <name, s> <- stats ], aflopend);
+   println(aantalIfs[0]);
+}
+
 public Content exercise10a() {
     loc project = |file:///C:/Users/mspr/Documents/OU/SoftwareQualityManagement/|;
     M3 model = createM3FromDirectory(project);
@@ -149,5 +211,5 @@ public Content exercise10a() {
     toRel(linesPerFile(model)) };
     
     return barChart(sort(lines, descending), title="Regels per Javabestand");
-    }
+}
 
