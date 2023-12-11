@@ -110,37 +110,6 @@ public rel[str, Statement] methodsAST(tree) {
 }
 
 
-public void exercise9(){
-    loc JabberpointProject = |file:///C:/Users/mspr/Documents/OU/SoftwareQualityManagement/|;
-    M3 model = createM3FromDirectory(JabberpointProject);
-    set[loc] bestanden = files(model);
-
-    //Calculate the number of Java files that make up the project
-    println(size(bestanden));
-
-    // Report the number of lines per Java file, in descending order.
-    map[loc, int] lines = linesPerFile(model);
-    for (<a, b> <- sort(toList(lines), descending))
-    println("<a.file>: <b> regels");
-
-    // //Sort the classes in the project by the number of methods.
-    methods = { <x,y> | <x,y> <- model.containment
-                , x.scheme=="java+class"
-                , y.scheme=="java+method" ||
-                y.scheme=="java+constructor"
-            };
-    countMethods = { <a, size(methods[a])> | a <- domain(methods) };
-    
-    for (<a,n> <- sort(countMethods, descending))
-    println("<a>: <n> methoden");
-
-    // klasse met meeste subklassen
-    // subclasses = invert(model.extends);
-    // countChildren = { <a, size((subclasses+)[a])> | a <-domain(subclasses) };
-    // for (<a, n> <- sort(countChildren, descending));
-    // println("<a>: <n> subclasses");
-}
-
 public bool aflopend(tuple[&a, num] x, tuple[&a, num] y) {
    return x[1] > y[1];
 } 
@@ -168,18 +137,21 @@ public int telIfs(Statement d) {
    return count;
 }
 
-public void exercise9correct() {
-   loc project = |file:///C:/Users/mspr/Documents/OU/SoftwareQualityManagement/|;
+public void exercise9(){
+       loc project = |file:///C:/Users/mspr/Documents/OU/SoftwareQualityManagement/|;
    M3 model = createM3FromDirectory(project);
    set[loc] bestanden = files(model);
+  
    // aantal Java-bestanden
    println("(9a)");
    println(size(bestanden));
+   
    // aantal regels per Java-bestand
    println("(9b)");
    map[loc, int] regels = regelsPerBestand(model);
    for (<a, b> <- sort(toList(regels), aflopend))
       println("<a.file>: <b> regels");
+   
    // aantal methoden per klasse (gesorteerd)
    println("(9c)");
    methoden =  { <x,y> | <x,y> <- model.containment
@@ -189,18 +161,25 @@ public void exercise9correct() {
    telMethoden = { <a, size(methoden[a])> | a <- domain(methoden) };
    for (<a,n> <- sort(telMethoden, aflopend))
       println("<a>: <n> methoden");
+   
    // klasse met meeste subklassen
    println("(9d)");
    subklassen = invert(model.extends);
    telKinderen = { <a, size((subklassen+)[a])> | a <- domain(subklassen) };
    for (<a, n> <- sort(telKinderen, aflopend))
       println("<a>: <n> subklassen");
+   
    // klasse met meeste if-statements
    println("(9e)");
    set[Declaration] decls = createAstsFromDirectory(project, true);
    rel[str,Statement] stats = methodenAST(decls);
    aantalIfs = sort([ <name, telIfs(s)> | <name, s> <- stats ], aflopend);
    println(aantalIfs[0]);
+}
+
+
+public void exercise9correct() {
+
 }
 
 public Content exercise10a() {
