@@ -12,6 +12,7 @@ import vis::Charts;
 import vis::Graphs;
 import Content;
 
+import Exercise5;
 
 int main(int testArgument=0) {
     println("argument: <testArgument>");
@@ -22,6 +23,9 @@ public rel[int, int] delers(int maxnum) {
     return { <a, b> | a <- [1..maxnum], b <- [1..a+1], a%b==0 };
 }
 
+public void exercise5FromOtherModule() {
+    println(exercise5());
+}
 
 public void exercise7(){
     //Compute the relationship between the natural numbers up to 100 and their divisors

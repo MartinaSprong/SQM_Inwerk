@@ -1,6 +1,7 @@
 module Exercise6
 
 import IO;
+import Exercise5;
 
 public void exercise6(){
     list[str] eu = ["Austria", "Belgium", "Bulgaria", "Czech Republic",
