@@ -10,6 +10,7 @@ public void exercise6(){
 
     //contains the letter s
     println({ a | a <- eu, /s/i := a });
+    //test
 
     //contains (at least) two e's
     println({a | a <- eu, /e.*e/i :=a });
